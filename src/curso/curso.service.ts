@@ -28,9 +28,9 @@ export class CursoService {
   async update(id: number, updateCursoDto: UpdateCursoDto): Promise<Curso | null> {
     try {
 
-      const curso = this.findOne(id);
+      const curso = await this.findOne(id);
 
-      if ((await curso).id == undefined) {
+      if (curso.id == undefined) {
         throw new ForbiddenException();
       }
 
