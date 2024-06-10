@@ -1,13 +1,15 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, HttpStatus, UseFilters } from '@nestjs/common';
 import { CursoService } from './curso.service';
 import { CreateCursoDto } from './dto/create-curso.dto';
 import { UpdateCursoDto } from './dto/update-curso.dto';
+import { HttpExceptionFilter } from 'src/filter/http-exception.filter';
 
 @Controller('curso')
 export class CursoController {
   constructor(private readonly cursoService: CursoService) {}
 
   @Post()
+  @UseFilters(new HttpExceptionFilter())
   create(@Body() createCursoDto: CreateCursoDto) {
     return this.cursoService.create(createCursoDto);
   }
@@ -18,17 +20,26 @@ export class CursoController {
   }
 
   @Get(':id')
-  findOne(@Param('id', ParseIntPipe) id: number) {
+  findOne(
+    @Param('id', new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE})) 
+    id: number
+  ) {
     return this.cursoService.findOne(id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateCursoDto: UpdateCursoDto) {
-    return this.cursoService.update(+id, updateCursoDto);
+  @UseFilters(new HttpExceptionFilter())
+  update(
+    @Param('id', new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE})) 
+    id: number, @Body() updateCursoDto: UpdateCursoDto
+  ) {
+    return this.cursoService.update(id, updateCursoDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.cursoService.remove(+id);
+  remove(
+    @Param('id', new ParseIntPipe({ errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE})) 
+    id: number) {
+    return this.cursoService.remove(id);
   }
 }
