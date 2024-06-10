@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ForbiddenException, HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateCursoDto } from './dto/create-curso.dto';
 import { UpdateCursoDto } from './dto/update-curso.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -25,8 +25,26 @@ export class CursoService {
     return this.cursoRepository.findOneBy({id});
   }
 
-  update(id: number, updateCursoDto: UpdateCursoDto) {
-    return `This action updates a #${id} curso`;
+  async update(id: number, updateCursoDto: UpdateCursoDto): Promise<Curso | null> {
+    try {
+
+      const curso = this.findOne(id);
+
+      if ((await curso).id == undefined) {
+        throw new ForbiddenException();
+      }
+
+      await this.cursoRepository.update(id, updateCursoDto);
+      return curso;
+
+    } catch (error) {
+      throw new HttpException({
+        status: HttpStatus.FORBIDDEN,
+        error: 'Error updated curso',
+      }, HttpStatus.FORBIDDEN, {
+        cause: error
+      });
+    }
   }
 
   async remove(id: number): Promise<void> {
