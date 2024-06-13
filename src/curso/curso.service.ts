@@ -21,6 +21,10 @@ export class CursoService {
     return this.cursoRepository.find();
   }
 
+  findByIds(ids: any[]): Promise<Curso[]> {
+    return this.cursoRepository.findBy(ids);
+  }
+
   findOne(id: number): Promise<Curso | null> {
     return this.cursoRepository.findOneBy({id});
   }
