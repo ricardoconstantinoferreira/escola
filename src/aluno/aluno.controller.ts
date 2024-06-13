@@ -3,7 +3,6 @@ import { AlunoService } from './aluno.service';
 import { CreateAlunoDto } from './dto/create-aluno.dto';
 import { UpdateAlunoDto } from './dto/update-aluno.dto';
 import { HttpExceptionFilter } from 'src/filter/http-exception.filter';
-import { CursoService } from 'src/curso/curso.service';
 
 @Controller('aluno')
 export class AlunoController {

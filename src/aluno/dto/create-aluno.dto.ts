@@ -8,9 +8,6 @@ export class CreateAlunoDto {
     @IsString()
     nome: string;
 
-    // @IsInt()
-    // id_curso: number;
-
     @IsString()
     profissao: string;
 
