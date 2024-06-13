@@ -15,8 +15,7 @@ export class MateriaController {
   @Post()
   @UseFilters(new HttpExceptionFilter())
   async create(@Body() createMateriaDto: CreateMateriaDto) {
-    let materia = await this.materiaService.create(createMateriaDto);
-    return this.cursomateriaService.save(materia.id, createMateriaDto.curso_id);
+    return await this.materiaService.create(createMateriaDto);
   }
 
   @Get()

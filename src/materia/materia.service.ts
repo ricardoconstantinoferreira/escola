@@ -25,14 +25,12 @@ export class MateriaService {
     return await this.materiaRepository.save(createMateriaDto);
   }
 
-  findAll(): Promise<Materia> {
-    return this.materiaRepository.findOne({
-      relations: {curso: true}
-    });
-  }
-
-  findByIds(id: any[]): Promise<Materia[]> {
-    return this.materiaRepository.findBy(id);
+  /**
+   * Get all materias
+   * @returns 
+   */
+  findAll(): Promise<Materia[]> {
+    return this.materiaRepository.find();
   }
 
   async findOne(id: number): Promise<Materia | null> {
