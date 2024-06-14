@@ -11,25 +11,36 @@ export class CursomateriaService {
     @InjectRepository(Cursomateria) private cursomateriaRepository: Repository<Cursomateria>,
   ) {}
 
-  create(createCursomateriaDto: CreateCursomateriaDto) {
+  /**
+   * Create association between materia and curso
+   * @param createCursomateriaDto 
+   * @returns 
+   */
+  async create(createCursomateriaDto: CreateCursomateriaDto) {
+    
+    let res = await this.findByCursoMateriaId(createCursomateriaDto.curso_id, createCursomateriaDto.materia_id);
+
+    if (res) {
+      throw new HttpException('This registers already!', HttpStatus.FORBIDDEN);
+    }
+
     return this.cursomateriaRepository.save(createCursomateriaDto);
   }
 
-  async save(materia_id: number, curso_id: number): Promise<Cursomateria> {
+  /**
+   * Check whether have curso_id with materia_id in association
+   * @param curso_id 
+   * @param materia_id 
+   * @returns 
+   */
+  async findByCursoMateriaId(curso_id: number, materia_id: number): Promise<boolean> {
 
-    try {
-        return await this.cursomateriaRepository.save({
-          "materia_id" : materia_id,
-          "curso_id" : curso_id
-        });
+    let result = await this.cursomateriaRepository.find({
+      where: [
+        {curso_id: curso_id, materia_id: materia_id}
+      ]
+    });
 
-    } catch (error) {
-        throw new HttpException({
-          status: HttpStatus.FORBIDDEN,
-          error: 'Error add relationship materia and curso',
-        }, HttpStatus.FORBIDDEN, {
-          cause: error
-        });
-    }
-}
+    return result.length > 0;
+  }
 }
