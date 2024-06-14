@@ -3,7 +3,7 @@ import { CreateMateriaDto } from './dto/create-materia.dto';
 import { UpdateMateriaDto } from './dto/update-materia.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Materia } from './entities/materia.entity';
-import { Repository } from 'typeorm';
+import { Repository, createQueryBuilder } from 'typeorm';
 
 @Injectable()
 export class MateriaService {
@@ -29,12 +29,22 @@ export class MateriaService {
    * Get all materias
    * @returns 
    */
-  findAll(): Promise<Materia[]> {
-    return this.materiaRepository.find();
+  async findAll(): Promise<Materia[]> {
+    return await this.materiaRepository.createQueryBuilder("materia")
+      .innerJoinAndSelect("materia.curso", "curso")
+      .getRawMany();
   }
 
-  async findOne(id: number): Promise<Materia | null> {
-    return await this.materiaRepository.findOneBy({id});
+  /**
+   * Get the courses of materia
+   * @param id 
+   * @returns 
+   */
+  async findOne(id: number): Promise<Materia[]> {
+    return await this.materiaRepository.createQueryBuilder("materia")
+      .innerJoinAndSelect("materia.curso", "curso")
+      .where("materia.id = :id", {id: id})
+      .getRawMany()
   }
 
   update(id: number, updateMateriaDto: UpdateMateriaDto) {
